@@ -439,6 +439,14 @@ class ContinuousPNGTableExtractor:
             # BeautifulSoup으로 파싱
             soup = BeautifulSoup(response.text, 'html.parser')
             
+            # davoshospital.co.kr에서만 전체 HTML 저장
+            if 'davoshospital.co.kr' in url:
+                html_filename = f"Medical/Context/Origin/M_origin_{origin_number}.html"
+                os.makedirs(os.path.dirname(html_filename), exist_ok=True)
+                with open(html_filename, 'w', encoding='utf-8') as f:
+                    f.write(response.text)
+                print(f"전체 HTML 페이지 저장: {html_filename}")
+            
             # panel 블록 찾기
             panels = soup.find_all('div', class_='panel')
             print(f"발견된 panel 블록 수: {len(panels)}")
@@ -452,7 +460,7 @@ class ContinuousPNGTableExtractor:
                 print(f" panel {p_idx}: 테이블 {len(tables)}개 발견")
 
                 for t_idx, table in enumerate(tables):
-                    # 판다스로 테이블 파싱 시도 (CSV용)
+                    # 판다스로 테이블 파싱 시도 (PNG 생성용)
                     try:
                         from io import StringIO
                         dfs = pd.read_html(StringIO(str(table)))
@@ -461,31 +469,12 @@ class ContinuousPNGTableExtractor:
                         dfs = []
 
                     if not dfs:
-                        print(f"테이블 {table_counter}에 파싱 가능한 데이터가 없습니다. 건너뜁니다.")
+                        print(f"테이블 {table_counter}에 파싱 가능한 데이터가 없습니다. 건너뜀니다.")
                         continue
 
                     df = dfs[0]
-
-                    # 저장: HTML (원본 테이블을 origin 폴더에)
-                    html_filename = f"Medical/Context/Origin/M_table_{origin_number}_{table_counter}.html"
-                    os.makedirs(os.path.dirname(html_filename), exist_ok=True)
-                    with open(html_filename, 'w', encoding='utf-8') as f:
-                        f.write(f"""<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <style>
-        body {{ font-family: "Malgun Gothic", "맑은 고딕", Arial, sans-serif; margin: 20px; }}
-        table {{ border-collapse: collapse; width: 100%; font-size: 14px; }}
-        th, td {{ border: 1px solid #ddd; padding: 8px; text-align: left; vertical-align: top; }}
-        th {{ background-color: #f2f2f2; font-weight: bold; }}
-        tr:nth-child(even) {{ background-color: #f9f9f9; }}
-    </style>
-</head>
-<body>
-    {str(table)}
-</body>
-</html>""")
+                    
+                    # 테이블 HTML은 이미 전체 페이지로 저장됨
 
                     # 저장: PNG (웹브라우저 스타일 렌더링)
                     print(f"HTML 테이블 렌더링 시도 중: 테이블 {table_counter}")
@@ -507,7 +496,7 @@ class ContinuousPNGTableExtractor:
                             plt.close(fig)
                         except Exception as e:
                             print(f"fallback 이미지 생성 실패: {e}")
-                            png_filename = html_filename
+                            png_filename = f"Medical/Table/M_table_{origin_number}_{table_counter}.png"
 
                     # 기본 메타 정보
                     table_entry = {

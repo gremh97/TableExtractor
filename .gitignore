@@ -50,6 +50,7 @@ Thumbs.db
 temperal_pdf/
 Medical/
 Medical_Table_Results.xlsx
+~$Medical_Table_Results.xlsx
 urls.txt
 chromedriver*
 *.log

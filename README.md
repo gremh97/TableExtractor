@@ -58,7 +58,7 @@ Medical/
 - 테이블 자동 감지 및 개별 캡처
 
 ### 2. HTML 패널 방식 사이트
-- `davoshospital.co.kr` 등 단일페이지 내 숨겨진 테이블
+- 단일페이지 내 숨겨진 테이블
 - `<div class="panel">` 블록 내 테이블 직접 추출
 - requests + BeautifulSoup4를 이용한 빠른 처리
 
