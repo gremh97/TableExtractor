@@ -1,4 +1,4 @@
-# Table Magnifier
+# TableExtractor
 
 의료 웹사이트에서 테이블 데이터를 자동으로 추출하고 시각화하는 도구입니다.
 
